@@ -197,7 +197,19 @@ public func pathParam<A, B>(
   pathParam(parameter, router())
 }
 
+extension PartialIso {
+
+  /// Create a new `PartialIso` with the given `CasePath`.
+  ///
+  /// - Parameters:
+  ///   - path: The case path to use for the partial isomorphism.
+  public static func `case`(_ path: CasePath<B, A>) -> PartialIso {
+    parenthesize <| PartialIso(apply: path.embed(_:), unapply: path.extract(from:))
+  }
+}
+
 // MARK: - Helpers
+
 extension Router {
 
   // Router currently does not have any public initializers, so keeping these internal.
