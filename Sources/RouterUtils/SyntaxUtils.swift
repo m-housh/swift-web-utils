@@ -1,8 +1,8 @@
 import ApplicativeRouter
 import CasePaths
 import Foundation
-import Prelude
 import NonEmpty
+import Prelude
 
 // MARK: - Methods
 
@@ -19,22 +19,22 @@ extension Router {
   public static func head() -> Router<Void> {
     method(.head)
   }
-  
+
   /// Create a router matching on an `OPTIONS` request.
   public static func options() -> Router<Void> {
     method(.options)
   }
-  
+
   /// Create a router matching on a `PATCH` request.
   public static func patch() -> Router<Void> {
     method(.patch)
   }
-  
+
   /// Create a router matching on a `POST` request.
   public static func post() -> Router<Void> {
     method(.post)
   }
-  
+
   /// Create a router matching on a `PUT` request.
   public static func put() -> Router<Void> {
     method(.put)
@@ -48,7 +48,7 @@ extension Router {
   /// In my testing if you experience errors where routes that use the same method are not getting matched,
   /// unless specified in a certain order when creating a router it's possibly because of not calling `end`.
   ///
-  /// ## Example
+  /// **Example**
   /// ```
   /// enum TestRouter {
   ///   case fetch
@@ -97,20 +97,36 @@ extension Router {
 
 // MARK: - Path
 extension Router where A == Void {
-  
+
+  /// Adds a path component to match the route on.
+  ///
+  /// - Parameters:
+  ///   - path: The path component.
   public func path(_ string: String) -> Router {
     self %> lit(sanitizePath(string))
   }
-  
+
+  /// Adds multiple path components to match the route on.
+  ///
+  /// - Parameters:
+  ///   - components: The path components.
   public func path(_ components: NonEmptyArray<String>?) -> Router {
     guard let components = components else { return self }
     return self %> parsePath(components)
   }
-  
+
+  /// Adds multiple path components to match the route on.
+  ///
+  /// - Parameters:
+  ///   - components: The path components.
   public func path(_ components: String...) -> Router {
     self.path(.init(rawValue: components))
   }
-  
+
+  /// Adds a path parameter to match the route on, and converts it to the appropriate type.
+  ///
+  /// - Parameters:
+  ///   - param: The partial isomorphism used to parse the path component.
   public func pathParam<B>(_ param: PartialIso<String, B>) -> Router<B> {
     self %> ApplicativeRouter.pathParam(param)
   }
@@ -118,7 +134,11 @@ extension Router where A == Void {
 
 // MARK: - Case Paths
 extension Router {
-  
+
+  /// Embeds the parsed parameters / body into an enum case, based on it's case path.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to embed the data in.
   public func `case`<B>(_ casePath: CasePath<B, A>) -> Router<B> {
     self.map(.case(casePath))
   }
@@ -128,14 +148,27 @@ extension Router {
 
 // TODO: Add more tuple types to allow for more than 2 parameters.
 extension Router where A == Void {
-  
+
+  /// Combines routers returning the parsed results as a tuple.
+  ///
+  /// This is helpful when you need to embed the parsed data into an enum case path that takes multiple parameters.
+  ///
+  /// - Parameters:
+  ///   - lhs: The first parsed component of the tuple.
+  ///   - rhs: The second parsed component of the tuple.
   public func tuple<B, C>(_ lhs: Router<B>, _ rhs: Router<C>) -> Router<(B, C)> {
     self %> lhs <%> rhs
   }
 }
 
 extension Router {
-  
+
+  /// Combines the current router with another one returning the parsed results as a tuple.
+  ///
+  /// This is helpful when you need to embed the parsed data into an enum case path that takes multiple parameters.
+  ///
+  /// - Parameters:
+  ///   - rhs: The second parsed component of the tuple.
   public func tuple<B>(_ rhs: Router<B>) -> Router<(A, B)> {
     self <%> rhs
   }
@@ -143,7 +176,12 @@ extension Router {
 
 // MARK: - Query Param
 extension Router where A == Void {
-  
+
+  /// Parses an optional query parameter and converts it to the appropriate type.
+  ///
+  /// - Parameters:
+  ///   - key: The query parameter's key.
+  ///   - param: The partial isomorphism used to convert the parameter to the appropriate type.
   public func queryParam<B>(_ key: String, _ param: PartialIso<String?, B>) -> Router<B> {
     self %> ApplicativeRouter.queryParam(key, param)
   }
@@ -151,7 +189,13 @@ extension Router where A == Void {
 
 // MARK: JSON Body
 extension Router where A == Void {
-  
+
+  /// Parses the body as json, decoding to the appropriate type.
+  ///
+  /// - Parameters:
+  ///   - type: The type to decode the json body too.
+  ///   - encoder: The json encoder to use for encoding data.
+  ///   - decoder: The json decoder to use for decoding data.
   public func jsonBody<B>(
     _ type: B.Type,
     encoder: JSONEncoder = .init(),
@@ -162,6 +206,12 @@ extension Router where A == Void {
 }
 
 extension Router {
+  /// Parses the body as json, decoding to the appropriate type.
+  ///
+  /// - Parameters:
+  ///   - type: The type to decode the json body too.
+  ///   - encoder: The json encoder to use for encoding data.
+  ///   - decoder: The json decoder to use for decoding data.
   public func jsonBody<B>(
     _ type: B.Type,
     encoder: JSONEncoder = .init(),
@@ -173,12 +223,14 @@ extension Router {
 
 // MARK: Routes
 extension Router {
-  
+  /// Convenience for creating a router out of other routers.
+  ///
+  /// - Parameters:
+  ///   - routers: The routers to combine to create a single router out of.
   public static func routes(_ routes: Router...) -> Router {
     routes.reduce(.empty, <|>)
   }
 }
-
 
 // MARK: - Helpers
 

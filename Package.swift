@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.3
 
 import PackageDescription
 
@@ -8,7 +8,7 @@ let package = Package(
     .macOS(.v10_13)
   ],
   products: [
-    .library(name: "RouterUtils", targets: ["RouterUtils"]),
+    .library(name: "RouterUtils", targets: ["RouterUtils"])
   ],
   dependencies: [
     .package(

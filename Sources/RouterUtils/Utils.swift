@@ -5,7 +5,7 @@ import NonEmpty
 import Prelude
 
 extension Router {
-  
+
   /// Useful when embedding a router inside of another one.
   ///
   /// - Parameters:
@@ -20,7 +20,7 @@ extension Router {
     PartialIso.case(casePath)
       <¢> parsePath(path) %> router
   }
-  
+
   /// Useful when embedding a router inside of another one.
   ///
   /// - Parameters:
@@ -129,7 +129,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .get, chainingTo: router)
   }
-  
+
   /// Create a router that matches an incoming GET request.
   ///
   /// - Parameters:
@@ -157,7 +157,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .post, chainingTo: router)
   }
-  
+
   /// Create a router that matches an incoming POST request.
   ///
   /// - Parameters:
