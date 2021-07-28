@@ -1,3 +1,4 @@
+LLVM_PATH := /usr/local/opt/llvm/bin/llvm-cov
 BIN_PATH = $(shell swift build --show-bin-path)
 XCTEST_PATH = $(shell find $(BIN_PATH) -name '*.xctest')
 COV_BIN = $(XCTEST_PATH)/Contents/MacOs/$(shell basename $(XCTEST_PATH) .xctest)
