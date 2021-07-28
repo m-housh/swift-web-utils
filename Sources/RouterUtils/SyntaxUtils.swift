@@ -1,0 +1,174 @@
+import ApplicativeRouter
+import CasePaths
+import Foundation
+import Prelude
+import NonEmpty
+
+// MARK: - Methods
+
+extension Router {
+  
+  public static func delete() -> Router<Void> {
+    method(.delete)
+  }
+  
+  public static func get() -> Router<Void> {
+    method(.get)
+  }
+  
+  public static func head() -> Router<Void> {
+    method(.head)
+  }
+  
+  public static func options() -> Router<Void> {
+    method(.options)
+  }
+  
+  public static func patch() -> Router<Void> {
+    method(.patch)
+  }
+  
+  public static func post() -> Router<Void> {
+    method(.post)
+  }
+  
+  public static func put() -> Router<Void> {
+    method(.put)
+  }
+  
+  public func end() -> Router {
+    self <% ApplicativeRouter.end
+  }
+}
+
+// MARK: - Path
+extension Router where A == Void {
+  
+  public func path(_ string: String) -> Router {
+    self %> lit(sanitizePath(string))
+  }
+  
+  public func path(_ components: NonEmptyArray<String>?) -> Router {
+    guard let components = components else { return self }
+    return self %> parsePath(components)
+  }
+  
+  public func path(_ components: String...) -> Router {
+    self.path(.init(rawValue: components))
+  }
+  
+  public func pathParam<B>(_ param: PartialIso<String, B>) -> Router<B> {
+    self %> ApplicativeRouter.pathParam(param)
+  }
+}
+
+//extension Router {
+//  public func pathParam<B>(_ param: PartialIso<String, B>) -> Router<(A, B)> {
+//    self <%> ApplicativeRouter.pathParam(param)
+//  }
+//}
+
+// MARK: - Case Paths
+extension Router {
+  
+  public func `case`<B>(_ casePath: CasePath<B, A>) -> Router<B> {
+    self.map(.case(casePath))
+  }
+}
+
+//extension Router where A == Void {
+//
+//  public func `case`<B>(_ casePath: CasePath<B, A>, _ router: @escaping () -> Router<A>) -> Router<B> {
+//    PartialIso.case(casePath) <¢> self %> router()
+//  }
+//}
+
+// MARK: - Tuple
+extension Router where A == Void {
+  
+  public func tuple<B, C>(_ lhs: Router<B>, _ rhs: Router<C>) -> Router<(B, C)> {
+    self %> lhs <%> rhs
+  }
+}
+
+// MARK: - Query Param
+extension Router where A == Void {
+  
+  public func queryParam<B>(_ key: String, _ param: PartialIso<String?, B>) -> Router<B> {
+    self %> ApplicativeRouter.queryParam(key, param)
+  }
+}
+
+//extension Router {
+//
+//  public func queryParam<B>(_ key: String, _ param: PartialIso<String?, B>) -> Router<(A, B)> {
+//    self <%> ApplicativeRouter.queryParam(key, param)
+//  }
+//}
+
+//extension Router {
+//  public func tuple<B>(_ router: Router<B>) -> Router<(A, B)> {
+//    self <%> router
+//  }
+//}
+// MARK: JSON Body
+extension Router where A == Void {
+  
+  public func jsonBody<B>(
+    _ type: B.Type,
+    encoder: JSONEncoder = .init(),
+    decoder: JSONDecoder = .init()
+  ) -> Router<B> where B: Codable {
+    self %> ApplicativeRouter.jsonBody(type, encoder: encoder, decoder: decoder)
+  }
+}
+
+extension Router {
+  public func jsonBody<B>(
+    _ type: B.Type,
+    encoder: JSONEncoder = .init(),
+    decoder: JSONDecoder = .init()
+  ) -> Router<(A, B)> where B: Codable {
+    self <%> ApplicativeRouter.jsonBody(type, encoder: encoder, decoder: decoder)
+  }
+}
+
+// MARK: Routes
+extension Router {
+  
+  public static func routes(_ routes: Router...) -> Router {
+    routes.reduce(.empty, <|>)
+  }
+}
+
+
+// MARK: - Helpers
+
+/// Strips any leading "/" from the path.
+///
+/// - Parameters:
+///   - path: The path to sanitize.
+private func sanitizePath(_ path: String) -> String {
+  if path.starts(with: "/") {
+    // call ourself recursively until all leading "/" are removed.
+    return sanitizePath(String(path.dropFirst()))
+  }
+  return path
+}
+
+/// Sanitize and parse the path components used in routes.
+///
+/// - Parameters:
+///   - first: The first path component to sanitize and parse.
+///   - rest: The other path components to sanitize and parse.
+private func parsePath(_ first: String, rest: ArraySlice<String>) -> Router<Void> {
+  rest.reduce(lit(sanitizePath(first)), { $0 %> lit(sanitizePath($1)) })
+}
+
+/// Sanitize and parse the path components used in routes.
+///
+/// - Parameters:
+///   - pathComponents: The path components to sanitize and parse.
+private func parsePath(_ pathComponents: NonEmptyArray<String>) -> Router<Void> {
+  return parsePath(pathComponents.first, rest: pathComponents.suffix(from: 1))
+}

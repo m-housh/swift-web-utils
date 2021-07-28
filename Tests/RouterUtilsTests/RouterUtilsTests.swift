@@ -1,4 +1,6 @@
 import XCTest
+import ApplicativeRouter
+import CasePaths
 import NonEmpty
 import Prelude
 

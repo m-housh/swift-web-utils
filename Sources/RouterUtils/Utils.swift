@@ -232,7 +232,7 @@ extension Router {
       <¢> ApplicativeRouter.method(method)
       %> parsePath(path)
       %> router
-      <% end
+      <% ApplicativeRouter.end
   }
 
   /// Create a router that matches on the given path parameters and  does not require any additional parameters
@@ -250,7 +250,7 @@ extension Router {
     self = PartialIso.case(casePath)
       <¢> ApplicativeRouter.method(method)
       %> parsePath(path)
-      <% end
+      <% ApplicativeRouter.end
   }
 }
 
