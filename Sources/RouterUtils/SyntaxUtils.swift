@@ -7,35 +7,89 @@ import NonEmpty
 // MARK: - Methods
 
 extension Router {
-  
+  /// Create a router matching on a `DELETE` request.
   public static func delete() -> Router<Void> {
     method(.delete)
   }
-  
+  /// Create a router matching on a `GET` request.
   public static func get() -> Router<Void> {
     method(.get)
   }
-  
+  /// Create a router matching on a `HEAD` request.
   public static func head() -> Router<Void> {
     method(.head)
   }
   
+  /// Create a router matching on an `OPTIONS` request.
   public static func options() -> Router<Void> {
     method(.options)
   }
   
+  /// Create a router matching on a `PATCH` request.
   public static func patch() -> Router<Void> {
     method(.patch)
   }
   
+  /// Create a router matching on a `POST` request.
   public static func post() -> Router<Void> {
     method(.post)
   }
   
+  /// Create a router matching on a `PUT` request.
   public static func put() -> Router<Void> {
     method(.put)
   }
-  
+}
+
+// MARK: - End
+extension Router {
+  /// Ends the router ensuring all path components have been consumed.
+  ///
+  /// In my testing if you experience errors where routes that use the same method are not getting matched,
+  /// unless specified in a certain order when creating a router it's possibly because of not calling `end`.
+  ///
+  /// ## Example
+  /// ```
+  /// enum TestRouter {
+  ///   case fetch
+  ///   case fetch(id: Int)
+  /// }
+  ///
+  /// let router1: Router<TestRouter> = .routes(
+  ///   .get()
+  ///     .path("test")
+  ///     .case(/TestRouter.fetch),
+  ///   .get()
+  ///     .path("test")
+  ///     .pathParam(.int)
+  ///     .case(/TestRouter.fetch(id:))
+  /// )
+  ///  // router1 will not match on `GET` /test/42, but will match on `GET` /test
+  ///
+  /// let router2: Router<TestRouter> = .routes(
+  ///   .get()
+  ///     .path("test")
+  ///     .pathParam(.int)
+  ///     .case(/TestRouter.fetch(id:)),
+  ///   .get()
+  ///     .path("test")
+  ///     .case(/TestRouter.fetch)
+  /// )
+  ///  // router2 would work as expeced and match on `GET` /test/42 and `GET` /test
+  ///
+  /// let router3: Router<TestRouter> = .routes(
+  ///   .get()
+  ///     .path("test")
+  ///     .case(/TestRouter.fetch)
+  ///     .end(),
+  ///   .get()
+  ///     .path("test")
+  ///     .pathParam(.int)
+  ///     .case(/TestRouter.fetch(id:))
+  ///     .end()
+  /// )
+  ///  // router3 would work as expeced and match on `GET` /test/42 and `GET` /test
+  ///  ```
   public func end() -> Router {
     self <% ApplicativeRouter.end
   }
