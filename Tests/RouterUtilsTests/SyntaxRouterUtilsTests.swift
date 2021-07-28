@@ -15,30 +15,30 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
   override func setUp() {
     super.setUp()
     
-    self.router = .routes(
-      .delete()
+    self.router = Router<TestRoute>.routes(
+      Router<TestRoute>.delete()
         .path("/test") // Make sure leading slashes get removed.
         .path() // Test calling path without strings does nothing.
         .path() // Test even calling path multiple times without strings does nothing.
         .pathParam(.int)
         .case(/TestRoute.delete(id:))
         .end(),
-      .get()
+      Router<TestRoute>.get()
         .path("//test") // Make sure leading slashes get removed.
         .case(/TestRoute.fetchAll)
         .end(),
-      .get()
+      Router<TestRoute>.get()
         .path("test", "/param") // Make sure leading slashes get removed.
         .queryParam("foo", opt(.string))
         .case(/RouteWithParam.fetch(foo:))
         .case(/TestRoute.fetchWithParam)
         .end(),
-      .post()
+      Router<TestRoute>.post()
         .path("test")
         .jsonBody(TestRoute.InsertRequest.self)
         .case(/TestRoute.insert)
         .end(),
-      .post()
+      Router<TestRoute>.post()
         .path("test")
       // Both of these syntaxes work.
         .pathParam(.int)
@@ -56,11 +56,11 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
 //      .case(/NestedRoute.Deep1.deep2)
 //      .case(/NestedRoute.deep1)
     
-    self.nestedRouter = .get()
+    self.nestedRouter = Router<NestedRoute>.get()
       .path("deep1", "deep2", "deep3")
       .case(/NestedRoute.Deep1.Deep2.fetch)
-      .map(.case(/NestedRoute.Deep1.deep2)) // This is the `PartialIso.case(_:)` method inside the `map`
-      .map(.case(/NestedRoute.deep1)) // This is the `PartialIso.case(_:)` method inside the `map`
+      .map(PartialIso.case(/NestedRoute.Deep1.deep2)) // This is the `PartialIso.case(_:)` method inside the `map`
+      .map(PartialIso.case(/NestedRoute.deep1)) // This is the `PartialIso.case(_:)` method inside the `map`
   }
   
   func testDeleteRoute() {
@@ -114,7 +114,7 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
   }
   
   func testPutRoute() {
-    let router: Router<TestRoute> = .put()
+    let router = Router<TestRoute>.put()
       .path("test", "put")
       .tuple(pathParam(.int), jsonBody(TestRoute.UpdateRequest.self))
       .case(/TestRoute.update(id:update:))
@@ -131,7 +131,7 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
   }
   
   func testPatchRoute() {
-    let router: Router<TestRoute> = .patch()
+    let router = Router<TestRoute>.patch()
       .path("test", "patch")
       .tuple(pathParam(.int), jsonBody(TestRoute.UpdateRequest.self))
       .case(/TestRoute.update(id:update:))
@@ -148,7 +148,7 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
   }
   
   func testOptionsRoute() {
-    let router: Router<TestRoute> = .options()
+    let router = Router<TestRoute>.options()
       .path("test", "options")
       .case(/TestRoute.options)
       .end()
@@ -161,7 +161,7 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
   }
   
   func testHeadRoute() {
-    let router: Router<TestRoute> = .head()
+    let router = Router<TestRoute>.head()
       .path("test", "head")
       .case(/TestRoute.head)
       .end()

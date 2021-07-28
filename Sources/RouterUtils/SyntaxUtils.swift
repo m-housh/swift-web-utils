@@ -110,8 +110,7 @@ extension Router where A == Void {
   ///
   /// - Parameters:
   ///   - components: The path components.
-  public func path(_ components: NonEmptyArray<String>?) -> Router {
-    guard let components = components else { return self }
+  public func path(_ components: NonEmptyArray<String>) -> Router {
     return self %> parsePath(components)
   }
 
@@ -120,7 +119,9 @@ extension Router where A == Void {
   /// - Parameters:
   ///   - components: The path components.
   public func path(_ components: String...) -> Router {
-    self.path(.init(rawValue: components))
+    guard let components = NonEmptyArray<String>.init(rawValue: components)
+    else { return self }
+    return self.path(components)
   }
 
   /// Adds a path parameter to match the route on, and converts it to the appropriate type.

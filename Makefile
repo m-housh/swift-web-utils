@@ -13,7 +13,7 @@ test-linux:
     --workdir "$(PWD)" \
     --platform linux/amd64 \
     swift:5.3 \
-    swift test --enable-code-coverage
+    bash Bootstrap/test.sh
     
 test-all: test-swift test-linux
 
