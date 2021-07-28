@@ -15,6 +15,10 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
   override func setUp() {
     super.setUp()
     
+    // - NOTE: The type names are required when testing on linux, for some reason it gives errors
+    //         that it's unable to typecheck in a reasonable time.  On macOS they are not required
+    //         which makes the syntax a little nicer.  I have not checked to see if this is resolved
+    //         with using the swift 5.4 toolchain.
     self.router = Router<TestRoute>.routes(
       Router<TestRoute>.delete()
         .path("/test") // Make sure leading slashes get removed.

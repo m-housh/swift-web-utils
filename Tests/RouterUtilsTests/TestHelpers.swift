@@ -47,34 +47,5 @@ class RouterUtilsTestCase: XCTestCase {
   
   override func setUp() {
     super.setUp()
-    
-    let path: NonEmptyArray<String> = .init("/test")
-    
-    self.router = .chaining(
-      .delete(/TestRoute.delete(id:), at: path) {
-        pathParam(.int)
-      },
-      .get(/TestRoute.fetchAll, at: path),
-      .post(/TestRoute.insert, at: path) {
-        jsonBody(TestRoute.InsertRequest.self)
-      },
-      .post(/TestRoute.update(id:update:), at: path) {
-        pathParam(.int) {
-          jsonBody(TestRoute.UpdateRequest.self)
-        }
-      },
-      .get(/TestRoute.fetchWithParam, at: .init("test", "param")) {
-        .case(/RouteWithParam.fetch(foo:)) {
-          queryParam("foo", opt(.string))
-        }
-      }
-    )
-    
-    self.nestedRouter = .case(/NestedRoute.deep1, at: .init("deep1")) {
-      .case(/NestedRoute.Deep1.deep2, at: .init("deep2")) {
-        .get(/NestedRoute.Deep1.Deep2.fetch, at: .init("deep3"))
-      }
-    }
-    
   }
 }
