@@ -29,7 +29,10 @@ format:
 		--recursive \
 		./Package.swift \
 		./Sources/
-
+		
+check-for-llvm:
+	test -f $(LLVM_PATH) || brew install llvm
+	
 code-cov: check-for-llvm
 	rm -rf $(COV_OUTPUT_PATH)
 	$(LLVM_PATH) export \
