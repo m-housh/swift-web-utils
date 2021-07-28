@@ -62,12 +62,6 @@ extension Router where A == Void {
   }
 }
 
-//extension Router {
-//  public func pathParam<B>(_ param: PartialIso<String, B>) -> Router<(A, B)> {
-//    self <%> ApplicativeRouter.pathParam(param)
-//  }
-//}
-
 // MARK: - Case Paths
 extension Router {
   
@@ -76,18 +70,20 @@ extension Router {
   }
 }
 
-//extension Router where A == Void {
-//
-//  public func `case`<B>(_ casePath: CasePath<B, A>, _ router: @escaping () -> Router<A>) -> Router<B> {
-//    PartialIso.case(casePath) <¢> self %> router()
-//  }
-//}
-
 // MARK: - Tuple
+
+// TODO: Add more tuple types to allow for more than 2 parameters.
 extension Router where A == Void {
   
   public func tuple<B, C>(_ lhs: Router<B>, _ rhs: Router<C>) -> Router<(B, C)> {
     self %> lhs <%> rhs
+  }
+}
+
+extension Router {
+  
+  public func tuple<B>(_ rhs: Router<B>) -> Router<(A, B)> {
+    self <%> rhs
   }
 }
 
@@ -99,18 +95,6 @@ extension Router where A == Void {
   }
 }
 
-//extension Router {
-//
-//  public func queryParam<B>(_ key: String, _ param: PartialIso<String?, B>) -> Router<(A, B)> {
-//    self <%> ApplicativeRouter.queryParam(key, param)
-//  }
-//}
-
-//extension Router {
-//  public func tuple<B>(_ router: Router<B>) -> Router<(A, B)> {
-//    self <%> router
-//  }
-//}
 // MARK: JSON Body
 extension Router where A == Void {
   
@@ -129,7 +113,7 @@ extension Router {
     encoder: JSONEncoder = .init(),
     decoder: JSONDecoder = .init()
   ) -> Router<(A, B)> where B: Codable {
-    self <%> ApplicativeRouter.jsonBody(type, encoder: encoder, decoder: decoder)
+    tuple(ApplicativeRouter.jsonBody(type, encoder: encoder, decoder: decoder))
   }
 }
 

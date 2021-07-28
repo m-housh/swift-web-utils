@@ -9,7 +9,9 @@ enum TestRoute: Equatable {
   case delete(id: Int)
   case fetchAll
   case fetchWithParam(RouteWithParam)
+  case head
   case insert(InsertRequest)
+  case options
   case update(id: Int, update: UpdateRequest)
   
   struct InsertRequest: Codable, Equatable {
@@ -74,33 +76,5 @@ class RouterUtilsTestCase: XCTestCase {
       }
     }
     
-    self.router = .routes(
-      .delete()
-        .path("test")
-        .pathParam(.int)
-        .case(/TestRoute.delete(id:))
-        .end(),
-      .get()
-        .path("test")
-        .case(/TestRoute.fetchAll)
-        .end(),
-      .get()
-        .path("test", "param")
-        .queryParam("foo", opt(.string))
-        .case(/RouteWithParam.fetch(foo:))
-        .case(/TestRoute.fetchWithParam)
-        .end(),
-      .post()
-        .path("test")
-        .jsonBody(TestRoute.InsertRequest.self)
-        .case(/TestRoute.insert)
-        .end(),
-      .post()
-        .path("test")
-        .tuple(pathParam(.int), jsonBody(TestRoute.UpdateRequest.self))
-        .case(/TestRoute.update(id:update:))
-        .end()
-        
-    )
   }
 }
