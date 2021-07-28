@@ -146,7 +146,7 @@ extension Router {
 }
 
 extension PartialIso {
-  
+
   public static func `case`(_ casePath: CasePath<B, A>) -> PartialIso {
     PartialIso(apply: casePath.embed(_:), unapply: casePath.extract(from:))
   }
