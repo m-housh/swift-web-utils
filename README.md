@@ -27,7 +27,7 @@ let package = Package(
   ],
   products: [...],
   dependencies: [
-    .package(url: "https://github.com/m-housh/swift-web-utils", from: "0.1.0"),
+    .package(url: "https://github.com/m-housh/swift-web-utils.git", from: "0.1.0"),
     ...
   ],
   targets: [...]
