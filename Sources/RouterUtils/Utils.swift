@@ -135,7 +135,7 @@ extension Router where A == Void {
 
 // MARK: - Case Paths
 extension Router {
-  
+
   /// Embeds a router in an enum case.
   ///
   /// This is helpful when you have an enum case that really only is a container for a router that does the actual routing.
@@ -146,7 +146,7 @@ extension Router {
   public static func `case`<B>(_ casePath: CasePath<A, B>, chainingTo router: Router<B>) -> Router {
     PartialIso.case(casePath) <¢> router
   }
-  
+
   /// Embeds a router in an enum case.
   ///
   /// This is helpful when you have an enum case that really only is a container for a router that does the actual routing.
@@ -154,7 +154,9 @@ extension Router {
   /// - Parameters:
   ///   - casePath: The enum case to embed the router in.
   ///   - router: The router that handles the routes.
-  public static func `case`<B>(_ casePath: CasePath<A, B>, chainingTo router: @escaping () -> Router<B>) -> Router {
+  public static func `case`<B>(
+    _ casePath: CasePath<A, B>, chainingTo router: @escaping () -> Router<B>
+  ) -> Router {
     .case(casePath, chainingTo: router())
   }
 
