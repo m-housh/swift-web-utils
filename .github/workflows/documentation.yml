@@ -1,6 +1,10 @@
 name: Documentation
 
-on: [push]
+on:
+  workflow_run:
+    workflows: ["Format"]
+    types:
+      - completed
 
 jobs:
   build:
