@@ -83,8 +83,6 @@ Next create the router that handles incoming request connections and parses them
 
 **Router.swift**
 ```swift
-import ApplicativeRouter
-import CasePaths
 import RouterUtils
 
 let userRouter: Router<UserRoute> = .routes(

@@ -185,4 +185,28 @@ final class SyntaxRouterUtilsTests: RouterUtilsTestCase {
     XCTAssertEqual(route, nestedRouter.match(request: request))
     XCTAssertEqual(request, nestedRouter.request(for: .deep1(.deep2(.fetch))))
   }
+  
+  func testStaticCaseMethod() {
+    enum Route: Equatable {
+      
+      case inner(Inner)
+      
+      enum Inner: Equatable {
+        case fetch
+      }
+    }
+    
+    let router: Router<Route> = .case(/Route.inner) {
+      Router<Route.Inner>.get().path("inner")
+        .case(/Route.Inner.fetch)
+        .end()
+    }
+    
+    let route = Route.inner(.fetch)
+    var request = URLRequest(url: URL(string: "inner")!)
+    request.httpMethod = "get"
+    
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: .inner(.fetch)))
+  }
 }
