@@ -98,7 +98,7 @@ extension String {
 }
 
 extension EitherIO where E == Error {
-  
+
   public func unwrap<B>(errorMessage: String) -> EitherIO<Error, B> where A == B? {
     self.mapExcept(_requireSome(errorMessage))
   }
