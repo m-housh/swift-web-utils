@@ -11,7 +11,7 @@ class DatabaseUtilsTests: DatabaseUtilsTestCase {
 
     XCTAssertEqual(inserted.id, 1)
     XCTAssertEqual(inserted.description, "blob")
-    
+
     let fetched = try self.client.fetchAll().run.perform().unwrap()
     XCTAssertEqual(fetched.count, 1)
     XCTAssertEqual(fetched.first!, inserted)

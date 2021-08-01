@@ -96,3 +96,27 @@ extension String {
   /// Convenience used for returning all columns in a database query.
   public static let all = "*"
 }
+
+extension EitherIO where E == Error {
+  
+  public func unwrap<B>(errorMessage: String) -> EitherIO<Error, B> where A == B? {
+    self.mapExcept(_requireSome(errorMessage))
+  }
+}
+
+private func _requireSome<A>(
+  _ message: String
+) -> (Either<Error, A?>) -> Either<Error, A> {
+  { e in
+    switch e {
+    case let .left(e):
+      return .left(e)
+    case let .right(a):
+      return a.map(Either.right) ?? .left(RequireSomeError(message: message))
+    }
+  }
+}
+
+struct RequireSomeError: Error {
+  let message: String
+}

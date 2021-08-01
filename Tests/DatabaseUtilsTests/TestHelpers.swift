@@ -31,26 +31,38 @@ extension TestDatabaseClient {
 
   static func testing(on connection: SQLiteConnection) -> Self {
     .init(
-      delete: DatabaseCrud.delete(from: table, on: connection.sql()),
-      fetchAll: DatabaseCrud.fetch(from: table, on: connection.sql()),
-      fetchId: DatabaseCrud.fetchId(from: table, on: connection.sql()),
+      delete: { id in
+        connection.sql().delete(from: table)
+          .where("id", .equal, id)
+          .run()
+      },
+      fetchAll: {
+        connection.sql().select()
+          .column(.all)
+          .from(table)
+          .all(decoding: TestDataModel.self)
+      },
+      fetchId: { id in
+        connection.sql().select()
+          .column(.all)
+          .from(table)
+          .where("id", .equal, id)
+          .first(decoding: TestDataModel.self)
+          .unwrap(errorMessage: "fetchId: \(id)")
+      },
       insert: { request in
         // SQLiteKit does not return values when inserting, so we have to fetch after inserting ??
         .catching {
-          try insertBuilder(inserting: request, to: table, on: connection.sql())
+          try connection.sql().insert(into: table)
+            .model(request)
             .run()
             .flatMap {
-              fetchBuilder(from: table, on: connection.sql())
+              connection.sql().select()
+                .column(.all)
+                .from(table)
                 .where("description", .equal, request.description)
                 .first(decoding: TestDataModel.self)
-                .mapExcept({ e in
-                  switch e {
-                  case let .left(error):
-                    return .left(error)
-                  case let .right(optionalData):
-                    return optionalData.map(Either.right) ?? .left(TestError())
-                  }
-                })
+                .unwrap(errorMessage: "insert: \(request)")
             }
           }
       },
@@ -67,19 +79,16 @@ extension TestDatabaseClient {
       },
       update: { request in
         .catching {
-            try updateBuilder(updating: request, table: table, on: connection.sql())
+          try connection.sql().update(table)
+              .set(model: request)
               .run()
               .flatMap {
-                fetchIdBuilder(id: request.id, from: table, on: connection.sql())
+                connection.sql().select()
+                  .column(.all)
+                  .from(table)
+                  .where("id", .equal, request.id)
                   .first(decoding: TestDataModel.self)
-                  .mapExcept({ e in
-                    switch e {
-                    case let .left(error):
-                      return .left(error)
-                    case let .right(optionalData):
-                      return optionalData.map(Either.right) ?? .left(TestError())
-                    }
-                  })
+                  .unwrap(errorMessage: "update: \(request)")
               }
           }
           
