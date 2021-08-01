@@ -9,7 +9,7 @@ let package = Package(
   ],
   products: [
     .library(name: "DatabaseUtils", targets: ["DatabaseUtils"]),
-    .library(name: "RouterUtils", targets: ["RouterUtils"])
+    .library(name: "RouterUtils", targets: ["RouterUtils"]),
   ],
   dependencies: [
     .package(
@@ -17,7 +17,9 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.5.0"),
     .package(url: "https://github.com/pointfreeco/swift-nonempty.git", from: "0.3.1"),
     .package(url: "https://github.com/vapor/sql-kit.git", from: "3.0.0"),
-    .package(name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")),
+    .package(
+      name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")
+    ),
     .package(url: "https://github.com/vapor/sqlite-kit.git", from: "4.0.0"),
   ],
   targets: [
@@ -26,14 +28,14 @@ let package = Package(
       dependencies: [
         .product(name: "Either", package: "Prelude"),
         .product(name: "NonEmpty", package: "swift-nonempty"),
-        .product(name: "SQLKit", package: "sql-kit")
+        .product(name: "SQLKit", package: "sql-kit"),
       ]
     ),
     .testTarget(
       name: "DatabaseUtilsTests",
       dependencies: [
         "DatabaseUtils",
-        .product(name: "SQLiteKit", package: "sqlite-kit")
+        .product(name: "SQLiteKit", package: "sqlite-kit"),
       ]
     ),
     .target(

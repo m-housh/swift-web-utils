@@ -50,7 +50,7 @@ extension Either where L: Error {
 }
 
 extension SQLDatabase {
-  
+
   /// Run a raw query on the database. Returning the future as an `EitherIO` type.
   ///
   /// - Parameters:
