@@ -136,4 +136,4 @@ struct ApiError: Codable, Error, Equatable, LocalizedError {
   }
 }
 
-struct EmptyCodable: Codable { }
+struct EmptyCodable: Codable {}
