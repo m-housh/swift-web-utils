@@ -1,6 +1,6 @@
 import Either
-import HttpPipeline
 import Foundation
+import HttpPipeline
 import Prelude
 
 /// Sends / encodes json data as the response type from incoming requests, finalizing the response.
@@ -12,7 +12,7 @@ public func respondJson<A: Encodable>(
     if testing {
       encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
     }
-    
+
     guard let data = try? encoder.encode(conn.data) else {
       let data = "Badly formed json".data(using: .utf8)!
       return conn.map(const(data))
@@ -21,7 +21,7 @@ public func respondJson<A: Encodable>(
         >=> closeHeaders
         >=> end
     }
-    
+
     return conn.map(const(data))
       |> writeStatus(.ok)
       >=> writeHeader(.contentType(.json))
@@ -39,7 +39,7 @@ public func respondJson<A: Encodable>(
     if testing {
       encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
     }
-    
+
     guard let data = try? encoder.encode(conn.data) else {
       let data = "Badly formed json".data(using: .utf8)!
       return conn.map(const(data))
@@ -47,7 +47,7 @@ public func respondJson<A: Encodable>(
         >=> closeHeaders
         >=> end
     }
-    
+
     return conn.map(const(data))
       |> writeHeader(.contentType(.json))
       >=> writeHeader(.contentLength(data.count))
@@ -55,7 +55,6 @@ public func respondJson<A: Encodable>(
       >=> end
   }
 }
-
 
 extension EitherIO where E == Error, A: Encodable {
 
@@ -90,13 +89,12 @@ extension EitherIO where E == Error, A == Void {
           |> writeStatus(.internalServerError)
           >=> MiddlewareUtils.respondJson(testing: testing)
       case .right:
-        return connection.map(const("{}"))
+        return connection.map(const(EmptyCodable()))
           |> MiddlewareUtils.respondJson(testing: testing)
       }
     }
   }
 }
-
 
 /// Represents errors that are thrown from the api. By wrapping an error that was thrown
 /// and allowing it to be codable to be sent for debugging.
@@ -137,3 +135,5 @@ struct ApiError: Codable, Error, Equatable, LocalizedError {
     self.message
   }
 }
+
+struct EmptyCodable: Codable { }

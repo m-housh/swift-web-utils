@@ -22,7 +22,9 @@ let package = Package(
       name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")
     ),
     .package(url: "https://github.com/vapor/sqlite-kit.git", from: "4.0.0"),
-    .package(name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
+    .package(
+      name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+      from: "1.0.0"),
   ],
   targets: [
     .target(
@@ -45,7 +47,7 @@ let package = Package(
       dependencies: [
         .product(name: "Either", package: "Prelude"),
         .product(name: "HttpPipeline", package: "Web"),
-        .product(name: "Prelude", package: "Prelude")
+        .product(name: "Prelude", package: "Prelude"),
       ]
     ),
     .testTarget(

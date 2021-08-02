@@ -1,4 +1,8 @@
 import XCTest
+import Foundation
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
 import HttpPipeline
 import HttpPipelineTestSupport
 import SnapshotTesting
@@ -24,7 +28,9 @@ class MiddlewareUtilsTests: XCTestCase {
     X-Permitted-Cross-Domain-Policies: none
     X-XSS-Protection: 1; mode=block
 
-    "{}"
+    {
+
+    }
     """#)
   }
   
