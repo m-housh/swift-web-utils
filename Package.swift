@@ -78,7 +78,7 @@ let package = Package(
       name: "TestUtils",
       dependencies: [
         .product(name: "Either", package: "Prelude"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay")
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
   ]
