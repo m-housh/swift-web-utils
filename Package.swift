@@ -11,6 +11,7 @@ let package = Package(
     .library(name: "DatabaseUtils", targets: ["DatabaseUtils"]),
     .library(name: "MiddlewareUtils", targets: ["MiddlewareUtils"]),
     .library(name: "RouterUtils", targets: ["RouterUtils"]),
+    .library(name: "TestUtils", targets: ["TestUtils"]),
   ],
   dependencies: [
     .package(
@@ -25,6 +26,7 @@ let package = Package(
     .package(
       name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
       from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay.git", from: "0.1.0"),
   ],
   targets: [
     .target(
@@ -71,6 +73,13 @@ let package = Package(
     .testTarget(
       name: "RouterUtilsTests",
       dependencies: ["RouterUtils"]
+    ),
+    .target(
+      name: "TestUtils",
+      dependencies: [
+        .product(name: "Either", package: "Prelude"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay")
+      ]
     ),
   ]
 )
