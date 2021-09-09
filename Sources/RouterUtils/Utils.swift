@@ -290,6 +290,15 @@ private func parsePath(_ first: String, rest: ArraySlice<String>) -> Router<Void
 /// Sanitize and parse the path components used in routes.
 ///
 /// - Parameters:
+///   - first: The first path component to sanitize and parse.
+///   - rest: The other path components to sanitize and parse.
+private func parsePath(_ first: String, rest: Slice<NonEmpty<[String]>>) -> Router<Void> {
+  rest.reduce(lit(sanitizePath(first)), { $0 %> lit(sanitizePath($1)) })
+}
+
+/// Sanitize and parse the path components used in routes.
+///
+/// - Parameters:
 ///   - pathComponents: The path components to sanitize and parse.
 private func parsePath(_ pathComponents: NonEmptyArray<String>) -> Router<Void> {
   return parsePath(pathComponents.first, rest: pathComponents.suffix(from: 1))
